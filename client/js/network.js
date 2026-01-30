@@ -19,9 +19,7 @@ class NetworkManager {
             return 'ws://localhost:8080';
         }
         // 生产环境使用 Render 服务器地址
-        // 部署后替换为你的 Render URL，例如：
-        // return 'wss://reaction-game-server.onrender.com';
-        return 'wss://你的服务器名.onrender.com'; // 替换为实际地址
+        return 'wss://reaction-game-server-9gy7.onrender.com';
     }
 
     // 连接服务器
