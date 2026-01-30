@@ -1,0 +1,9 @@
+{
+    "name": "reaction-game-client",
+    "version": "1.0.0",
+    "description": "反应对战游戏 - 前端",
+    "scripts": {},
+    "keywords": ["game", "reaction"],
+    "author": "",
+    "license": "MIT"
+}
