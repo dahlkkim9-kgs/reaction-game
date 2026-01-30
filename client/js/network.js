@@ -18,8 +18,10 @@ class NetworkManager {
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
             return 'ws://localhost:8080';
         }
-        // 生产环境使用实际服务器地址
-        return 'ws://localhost:8080'; // 修改为实际服务器地址
+        // 生产环境使用 Render 服务器地址
+        // 部署后替换为你的 Render URL，例如：
+        // return 'wss://reaction-game-server.onrender.com';
+        return 'wss://你的服务器名.onrender.com'; // 替换为实际地址
     }
 
     // 连接服务器
