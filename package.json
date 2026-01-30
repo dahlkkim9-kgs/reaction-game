@@ -1,0 +1,25 @@
+{
+    "name": "reaction-game",
+    "version": "1.0.0",
+    "description": "双人反应测试对战游戏",
+    "main": "server/server.js",
+    "scripts": {
+        "start": "node server/server.js",
+        "dev": "node server/server.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "game",
+        "reaction",
+        "websocket",
+        "multiplayer"
+    ],
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "ws": "^8.14.2"
+    },
+    "engines": {
+        "node": ">=14.0.0"
+    }
+}

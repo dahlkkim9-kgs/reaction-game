@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: reaction-game-server
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 8080
