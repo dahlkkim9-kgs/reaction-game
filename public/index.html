@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>反应对战游戏</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 游戏标题 -->
+        <header class="game-header">
+            <h1>⚡ 反应对战游戏 ⚡</h1>
+        </header>
+
+        <!-- 主菜单 -->
+        <div id="main-menu" class="menu-screen">
+            <h2>选择游戏模式</h2>
+            <div class="menu-buttons">
+                <button class="btn btn-primary" onclick="startSinglePlayer()">
+                    <span class="btn-icon">🤖</span>
+                    <span class="btn-text">单机练习</span>
+                </button>
+                <button class="btn btn-secondary" onclick="showMultiplayerMenu()">
+                    <span class="btn-icon">👥</span>
+                    <span class="btn-text">联机对战</span>
+                </button>
+                <button class="btn btn-info" onclick="showStats()">
+                    <span class="btn-icon">📊</span>
+                    <span class="btn-text">数据统计</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- AI 难度选择 -->
+        <div id="ai-menu" class="menu-screen hidden">
+            <h2>选择 AI 难度</h2>
+            <div class="menu-buttons">
+                <button class="btn btn-easy" onclick="startGame('ai', 'easy')">
+                    <span class="btn-icon">😊</span>
+                    <span class="btn-text">简单</span>
+                    <span class="btn-desc">反应时间 0.5-1.0秒</span>
+                </button>
+                <button class="btn btn-medium" onclick="startGame('ai', 'medium')">
+                    <span class="btn-icon">😐</span>
+                    <span class="btn-text">中等</span>
+                    <span class="btn-desc">反应时间 0.3-0.6秒</span>
+                </button>
+                <button class="btn btn-hard" onclick="startGame('ai', 'hard')">
+                    <span class="btn-icon">😈</span>
+                    <span class="btn-text">困难</span>
+                    <span class="btn-desc">反应时间 0.15-0.35秒</span>
+                </button>
+            </div>
+            <button class="btn btn-back" onclick="showMainMenu()">返回</button>
+        </div>
+
+        <!-- 联机对战菜单 -->
+        <div id="multiplayer-menu" class="menu-screen hidden">
+            <h2>联机对战</h2>
+            <div class="room-section">
+                <div class="input-group">
+                    <input type="text" id="room-input" placeholder="输入房间号（留空创建新房间）" maxlength="6">
+                    <button class="btn btn-primary" onclick="joinOrCreateRoom()">加入/创建房间</button>
+                </div>
+            </div>
+            <div id="room-info" class="room-info hidden">
+                <p>房间号: <strong id="room-id-display"></strong></p>
+                <p>状态: <span id="room-status">等待玩家加入...</span></p>
+            </div>
+            <button class="btn btn-back" onclick="showMainMenu()">返回</button>
+        </div>
+
+        <!-- 游戏区域 -->
+        <div id="game-area" class="game-area hidden">
+            <!-- 玩家信息面板 -->
+            <div class="players-panel">
+                <div class="player-card player-a" id="player-a-card">
+                    <div class="player-avatar">🔴</div>
+                    <div class="player-info">
+                        <h3 id="player-a-name">玩家 A</h3>
+                        <div class="player-score">得分: <span id="player-a-score">0</span></div>
+                        <div class="player-avg-time">平均反应: <span id="player-a-avg">--</span>ms</div>
+                    </div>
+                    <div class="turn-indicator hidden" id="player-a-turn">你的回合!</div>
+                </div>
+                <div class="vs-divider">VS</div>
+                <div class="player-card player-b" id="player-b-card">
+                    <div class="player-avatar">🔵</div>
+                    <div class="player-info">
+                        <h3 id="player-b-name">玩家 B</h3>
+                        <div class="player-score">得分: <span id="player-b-score">0</span></div>
+                        <div class="player-avg-time">平均反应: <span id="player-b-avg">--</span>ms</div>
+                    </div>
+                    <div class="turn-indicator hidden" id="player-b-turn">你的回合!</div>
+                </div>
+            </div>
+
+            <!-- 游戏信息 -->
+            <div class="game-info">
+                <div class="timer-display">
+                    <span class="timer-icon">⏱️</span>
+                    <span id="game-timer">60</span>
+                </div>
+                <div class="round-info">第 <span id="round-count">0</span> 回合</div>
+            </div>
+
+            <!-- 九宫格 -->
+            <div class="game-grid" id="game-grid">
+                <div class="grid-cell" data-index="0"></div>
+                <div class="grid-cell" data-index="1"></div>
+                <div class="grid-cell" data-index="2"></div>
+                <div class="grid-cell" data-index="3"></div>
+                <div class="grid-cell" data-index="4"></div>
+                <div class="grid-cell" data-index="5"></div>
+                <div class="grid-cell" data-index="6"></div>
+                <div class="grid-cell" data-index="7"></div>
+                <div class="grid-cell" data-index="8"></div>
+            </div>
+
+            <!-- 消息显示 -->
+            <div class="message-display" id="message-display"></div>
+
+            <!-- 倒计时覆盖层 -->
+            <div class="countdown-overlay hidden" id="countdown-overlay">
+                <span class="countdown-number" id="countdown-number">1</span>
+            </div>
+        </div>
+
+        <!-- 游戏结束 -->
+        <div id="game-over" class="menu-screen hidden">
+            <h2>🎉 游戏结束! 🎉</h2>
+            <div class="result-panel">
+                <div class="winner-display" id="winner-display"></div>
+                <div class="final-scores">
+                    <div class="score-row">
+                        <span>🔴 玩家 A:</span>
+                        <span id="final-score-a">0</span>
+                    </div>
+                    <div class="score-row">
+                        <span>🔵 玩家 B:</span>
+                        <span id="final-score-b">0</span>
+                    </div>
+                </div>
+                <div class="stats-summary">
+                    <p>最快反应: <span id="fastest-reaction">--</span>ms</p>
+                    <p>总回合数: <span id="total-rounds">0</span></p>
+                </div>
+            </div>
+            <div class="menu-buttons">
+                <button class="btn btn-primary" onclick="restartGame()">再来一局</button>
+                <button class="btn btn-secondary" onclick="showMainMenu()">返回主菜单</button>
+            </div>
+        </div>
+
+        <!-- 数据统计 -->
+        <div id="stats-screen" class="menu-screen hidden">
+            <h2>📊 数据统计</h2>
+            <div class="stats-content">
+                <div class="stats-tabs">
+                    <button class="tab-btn active" onclick="switchTab('history')">历史记录</button>
+                    <button class="tab-btn" onclick="switchTab('leaderboard')">排行榜</button>
+                    <button class="tab-btn" onclick="switchTab('progress')">进步趋势</button>
+                </div>
+                <div class="stats-panel" id="stats-history">
+                    <div class="history-list" id="history-list"></div>
+                </div>
+                <div class="stats-panel hidden" id="stats-leaderboard">
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>排名</th>
+                                <th>日期</th>
+                                <th>模式</th>
+                                <th>得分</th>
+                                <th>平均反应</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-body"></tbody>
+                    </table>
+                </div>
+                <div class="stats-panel hidden" id="stats-progress">
+                    <canvas id="progress-chart"></canvas>
+                </div>
+            </div>
+            <div class="stats-actions">
+                <button class="btn btn-danger" onclick="clearStats()">清除数据</button>
+                <button class="btn btn-back" onclick="showMainMenu()">返回</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/game.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/ai.js"></script>
+    <script src="js/network.js"></script>
+    <script src="js/stats.js"></script>
+</body>
+</html>
