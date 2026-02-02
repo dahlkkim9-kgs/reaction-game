@@ -18,8 +18,8 @@ class NetworkManager {
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
             return 'ws://localhost:8080';
         }
-        // 生产环境使用 Render 服务器地址
-        return 'wss://reaction-game-server-9gy7.onrender.com';
+        // 生产环境使用 ngrok 地址（注意：ngrok 地址会变化）
+        return 'wss://unrelative-ratty-corrin.ngrok-free.app';
     }
 
     // 连接服务器
