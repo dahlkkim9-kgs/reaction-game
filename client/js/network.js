@@ -14,8 +14,12 @@ class NetworkManager {
 
     // 获取服务器 URL
     getServerUrl() {
-        // 开发环境使用 localhost
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        // 本地开发环境：file:// 协议、localhost、127.0.0.1
+        const isLocal = window.location.protocol === 'file:' ||
+                        window.location.hostname === 'localhost' ||
+                        window.location.hostname === '127.0.0.1';
+
+        if (isLocal) {
             return 'ws://localhost:8080';
         }
         // 生产环境使用 ngrok 地址（注意：ngrok 地址会变化）
